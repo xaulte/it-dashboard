@@ -23,7 +23,7 @@ python main.py
 ```
 
 ## Author
-Your Name — COP1034C Python for IT
+Austin Windorski — COP1034C Python for IT
 
 ## License
 MIT
