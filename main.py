@@ -26,12 +26,14 @@ storage_status = "NORMAL"
 # Boolean flag: True once the user has entered data
 report_ready = False
 
+# Main menu
 def print_menu():
     print("\n--- IT Report Generator ---")
     print("1) Enter server info")
     print("2) View report")
     print("3) Exit")
 
+# Collecting user input
 def collect_input():
     global server_name, ip_address, department
     global total_disk_gb, used_disk_gb, usage_pct, report_ready
@@ -77,6 +79,7 @@ def collect_input():
     report_ready = True
     print("Server info and disk usage recorded.")
 
+# View the user compiled report
 def view_report():
     global server_name, ip_address, department
     global total_disk_gb, used_disk_gb, usage_pct, report_ready
@@ -95,6 +98,7 @@ def view_report():
     print(f"Usage: {usage_pct:.2f}% ({storage_status})")
     print("------------------")
 
+# Defining the main app
 def main():
     print(f"{APP_NAME} v{VERSION}")
     print("Ready to build something great.")
