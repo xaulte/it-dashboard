@@ -8,91 +8,91 @@ a new feature to this project.
 """
 
 # ── Application Metadata ──────────────────────────────────
-APPNAME = "IT Dashboard"
+APP_NAME = "IT Dashboard"
 VERSION = "0.2.0"
 
 # String variables for server identity
-servername = "Not entered"
-ipaddress = "Not entered"
+server_name = "Not entered"
+ip_address = "Not entered"
 department = "Not entered"
 
 # Numeric variables for disk metrics (integers in GB)
-totaldiskgb = 0
-useddiskgb = 0
+total_disk_gb = 0
+used_disk_gb = 0
 
 # Float: calculated percentage (set after user enters disk values)
-usagepct = 0.0
+usage_pct = 0.0
 
 # Boolean flag: True once the user has entered data
-reportready = False
+report_ready = False
 
-def printmenu():
+def print_menu():
     print("\n--- IT Report Generator ---")
     print("1) Enter server info")
     print("2) View report")
     print("3) Exit")
 
-def collectinput():
-    global servername, ipaddress, department
-    global totaldiskgb, useddiskgb, usagepct, reportready
+def collect_input():
+    global server_name, ip_address, department
+    global total_disk_gb, used_disk_gb, usage_pct, report_ready
 
-    servername = input("Enter server name: ").strip()
-    ipaddress = input("Enter IP address: ").strip()
-    department = input("Enter department: ").strip()
+    server_name = input("Enter server name: ").strip()
+    ip_address = input("Enter IP address: ").strip()
+    depart_ment = input("Enter department: ").strip()
 
     try:
-        totaldiskgb = int(input("Enter total disk space (GB): ").strip())
-        useddiskgb  = int(input("Enter used disk space (GB): ").strip())
+        total_disk_gb = int(input("Enter total disk space (GB): ").strip())
+        used_disk_gb  = int(input("Enter used disk space (GB): ").strip())
     except ValueError:
         print("Invalid disk values. Please enter integers.")
         return
 
     # Validation
-    if totaldiskgb < 0 or useddiskgb < 0:
+    if total_disk_gb < 0 or used_disk_gb < 0:
         print("Disk values must be non-negative.")
-        reportready = False
+        report_ready = False
         return
-    if useddiskgb > totaldiskgb:
+    if used_disk_gb > total_disk_gb:
         print("Used disk cannot exceed total disk.")
-        reportready = False
+        report_ready = False
         return
 
     # Calculate usagepct
-    if totaldiskgb == 0:
-        usagepct = 0.0
+    if total_disk_gb == 0:
+        usage_pct = 0.0
     else:
-        usagepct = (useddiskgb / totaldiskgb) * 100.0
+        usage_pct = (used_disk_gb / total_disk_gb) * 100.0
 
-    reportready = True
+    report_ready = True
     print("Server info and disk usage recorded.")
 
-def viewreport():
-    global servername, ipaddress, department
-    global totaldiskgb, useddiskgb, usagepct, reportready
+def view_report():
+    global server_name, ip_address, department
+    global total_disk_gb, used_disk_gb, usage_pct, report_ready
 
-    if not reportready:
+    if not report_ready:
         print("No data entered yet. Choose option 1 first.")
         return
 
     print("\n--- IT Report ---")
-    print(f"Server Name : {servername}")
-    print(f"IP Address  : {ipaddress}")
+    print(f"Server Name : {server_name}")
+    print(f"IP Address  : {ip_address}")
     print(f"Department  : {department}")
-    print(f"Total Disk  : {totaldiskgb} GB")
-    print(f"Used Disk   : {useddiskgb} GB")
-    print(f"Usage       : {usagepct:.2f}%")
+    print(f"Total Disk  : {total_disk_gb} GB")
+    print(f"Used Disk   : {used_disk_gb} GB")
+    print(f"Usage       : {usage_pct:.2f}%")
     print("------------------")
 
 def main():
-    print(f"{APPNAME} v{VERSION}")
+    print(f"{APP_NAME} v{VERSION}")
     print("Ready to build something great.")
     while True:
-        printmenu()
+        print_menu()
         choice = input("Select an option: ").strip()
         if choice == "1":
-            collectinput()
+            collect_input()
         elif choice == "2":
-            viewreport()
+            view_report()
         elif choice == "3":
             print("Goodbye. Application shutting down.")
             break
