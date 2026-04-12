@@ -22,7 +22,7 @@ used_disk_gb = 0
 
 # Float: calculated percentage (set after user enters disk values)
 usage_pct = 0.0
-
+storage_status = "NORMAL"
 # Boolean flag: True once the user has entered data
 report_ready = False
 
@@ -35,10 +35,11 @@ def print_menu():
 def collect_input():
     global server_name, ip_address, department
     global total_disk_gb, used_disk_gb, usage_pct, report_ready
+    global storage_usage_pct, storage_status
 
     server_name = input("Enter server name: ").strip()
     ip_address = input("Enter IP address: ").strip()
-    depart_ment = input("Enter department: ").strip()
+    department = input("Enter department: ").strip()
 
     try:
         total_disk_gb = int(input("Enter total disk space (GB): ").strip())
@@ -57,11 +58,21 @@ def collect_input():
         report_ready = False
         return
 
-    # Calculate usagepct
+    # Calculate usage_pct
     if total_disk_gb == 0:
         usage_pct = 0.0
+        storage_usage_pct = 0.0
     else:
         usage_pct = (used_disk_gb / total_disk_gb) * 100.0
+        storage_usage_pct = (used_disk_gb / total_disk_gb) * 100.0
+
+    # Storage status thresholds
+    if storage_usage_pct >= 90.0:
+        storage_status = "CRITICAL"
+    elif storage_usage_pct >= 70.0:
+        storage_status = "WARNING"
+    else:
+        storage_status = "NORMAL"
 
     report_ready = True
     print("Server info and disk usage recorded.")
@@ -69,6 +80,7 @@ def collect_input():
 def view_report():
     global server_name, ip_address, department
     global total_disk_gb, used_disk_gb, usage_pct, report_ready
+    global storage_status
 
     if not report_ready:
         print("No data entered yet. Choose option 1 first.")
@@ -80,7 +92,7 @@ def view_report():
     print(f"Department  : {department}")
     print(f"Total Disk  : {total_disk_gb} GB")
     print(f"Used Disk   : {used_disk_gb} GB")
-    print(f"Usage       : {usage_pct:.2f}%")
+    print(f"Usage: {usage_pct:.2f}% ({storage_status})")
     print("------------------")
 
 def main():
