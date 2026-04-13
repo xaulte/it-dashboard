@@ -10,6 +10,14 @@ a new feature to this project.
 # ── Application Metadata ──────────────────────────────────
 APP_NAME = "IT Dashboard"
 VERSION = "0.2.0"
+CREATOR_NAME = "Austin Windorski"
+PROF_NAME = "Prof. Frank Mora"
+COURSE_NAME = "COP1034C - Python for IT"
+ASSIGNMENT_NAME = "Python Project"
+
+from datetime import date
+today = date.today()
+todaystr = today.isoformat()  # 'YYYY-MM-DD'
 
 # String variables for server identity
 server_name = "Not entered"
@@ -71,7 +79,7 @@ def collect_input():
     # Storage status thresholds
     if storage_usage_pct >= 90.0:
         storage_status = "CRITICAL"
-    elif storage_usage_pct >= 70.0:
+    elif storage_usage_pct >= 75.0:
         storage_status = "WARNING"
     else:
         storage_status = "NORMAL"
@@ -101,6 +109,9 @@ def view_report():
 # Defining the main app
 def main():
     print(f"{APP_NAME} v{VERSION}")
+    print(f"{today}")
+    print(f"{CREATOR_NAME} | {PROF_NAME}")
+    print(f"{COURSE_NAME} | {ASSIGNMENT_NAME}")
     print("Ready to build something great.")
     while True:
         print_menu()
