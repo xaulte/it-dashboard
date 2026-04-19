@@ -1,0 +1,20 @@
+2026-04-19 08:12:01 [INFO] Server started successfully on port 8080
+2026-04-19 08:12:05 [INFO] Initializing database connection pool
+2026-04-19 08:12:45 [INFO] Successfully connected to PostgreSQL database
+2026-04-19 09:30:22 [WARNING] High memory usage detected: 85% utilization
+2026-04-19 09:45:11 [ERROR] Failed to authenticate user id=4920: Invalid credentials
+2026-04-19 10:05:33 [INFO] Scheduled cron job 'DailyBackup' executed successfully
+2026-04-19 10:15:02 [ERROR] Connection timeout while reaching external payment API
+2026-04-19 10:42:19 [WARNING] Rate limit exceeded for IP 192.168.1.105
+2026-04-19 11:01:55 [INFO] User id=8831 updated profile settings
+2026-04-19 11:20:10 [INFO] Cache miss for key: user_session_8831
+2026-04-19 11:45:00 [ERROR] NullPointerException in OrderProcessingService.java:142
+2026-04-19 12:05:12 [WARNING] Deprecated API endpoint /v1/users accessed by client
+2026-04-19 12:10:04 [INFO] File upload completed: report_q1_2026.pdf (2.4MB)
+2026-04-19 12:15:30 [CRITICAL] Disk space critically low on /var/log: 99% full
+2026-04-19 12:16:01 [INFO] Log rotation triggered for application.log
+2026-04-19 12:18:44 [ERROR] Missing configuration key 'SMTP_PASSWORD' during email dispatch
+2026-04-19 12:19:10 [INFO] Garbage collection cycle completed in 240ms
+2026-04-19 12:20:05 [INFO] New WebSocket connection established from client id=ws_992
+2026-04-19 12:20:25 [WARNING] Slow query detected on table 'transactions': execution time 4.5s
+2026-04-19 12:20:30 [ERROR] Failed to parse incoming JSON payload at line 4, column 12
