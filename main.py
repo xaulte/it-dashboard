@@ -9,7 +9,7 @@ a new feature to this project.
 
 # ── Application Metadata ──────────────────────────────────
 APP_NAME = "IT Dashboard"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 CREATOR_NAME = "Austin Windorski"
 PROF_NAME = "Prof. Frank Mora"
 COURSE_NAME = "COP1034C - Python for IT"
@@ -39,7 +39,8 @@ def print_menu():
     print("\n--- IT Report Generator ---")
     print("1) Enter server info")
     print("2) View report")
-    print("3) Exit")
+    print("3) Parse log summary")
+    print("4) Exit")
 
 # Collecting user input
 def collect_input():
@@ -106,6 +107,86 @@ def view_report():
     print(f"Usage: {usage_pct:.2f}% ({storage_status})")
     print("------------------")
 
+def parse_line(line):
+    import re
+    m = re.match(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \[(\w+)\] (.*)$', line)
+    if not m:
+        return None
+    date_field, severity, message = m.groups()
+    return {'date': date_field, 'severity': severity, 'message': message}
+
+def run_log_parser():
+    import os
+    global severity_counts, unique_errors, critical_events, log_entries
+    severity_counts = {}
+    unique_errors = set()
+    critical_events = set()
+    log_entries = []
+
+    try:
+        logfile = os.path.join(os.path.dirname(__file__), 'server.log')
+        with open(logfile, 'r') as f:
+            for line in f:
+                line = line.rstrip('\n')
+                entry = parse_line(line)
+                if not entry:
+                    continue
+                severity = entry['severity']
+                message = entry['message']
+                date_field = entry['date']
+
+                severity_counts[severity] = severity_counts.get(severity, 0) + 1
+                if severity == "ERROR":
+                    unique_errors.add(message)
+                if severity == "CRITICAL":
+                    critical_events.add(message)
+
+                log_entries.append({'date': date_field, 'severity': severity, 'message': message})
+    except FileNotFoundError:
+        print("Error: server.log not found. Place server.log in the same directory as this script.")
+        return
+
+    total_lines = len(log_entries)
+    error_count = severity_counts.get("ERROR", 0)
+    error_rate = (error_count / total_lines) * 100.0 if total_lines > 0 else 0.0
+
+    header_lines = []
+    for level in ["INFO", "WARNING", "ERROR", "CRITICAL"]:
+        count = severity_counts.get(level, 0)
+        header_lines.append(f"{level:<9}: {count:>4}")
+    header_section = "\n".join(header_lines)
+
+    with open(os.path.join(os.path.dirname(__file__), 'log_summary.txt'), 'w') as out:
+        print("=" * 37, file=out)
+        print(f"{APP_NAME} v{VERSION}", file=out)
+        print(f"{CREATOR_NAME} | {PROF_NAME}", file=out)
+        print(f"{COURSE_NAME} | {today}", file=out)
+        print("=" * 37, file=out)
+
+        print(header_section, file=out)
+        print(f"\nError rate: {error_rate:.2f}%", file=out)
+        print("Unique ERROR messages: {}".format(len(unique_errors)), file=out)
+        print("CRITICAL events: {}".format(len(critical_events)), file=out)
+
+        print("\n" + "=" * 37, file=out)
+        print(f"{'UNIQUE ERROR MESSAGES':^36}", file=out)
+        print("-" * 37, file=out)
+        if unique_errors:
+            for err in sorted(unique_errors):
+                print(f"- {err}", file=out)
+        else:
+            print("(none)", file=out)
+
+        print("\n" + "=" * 37, file=out)
+        print(f"{'UNIQUE CRITICAL MESSAGES':^36}", file=out)
+        print("-" * 37, file=out)
+        if critical_events:
+            for c in sorted(critical_events):
+                print(f"- {c}", file=out)
+        else:
+            print("(none)", file=out)
+
+
 # Defining the main app
 def main():
     print(f"{APP_NAME} v{VERSION}")
@@ -121,10 +202,12 @@ def main():
         elif choice == "2":
             view_report()
         elif choice == "3":
+            run_log_parser()   # only here will logsummary.txt be created
+        elif choice == "4":
             print("Goodbye. Application shutting down.")
             break
         else:
-            print("Invalid choice. Enter 1, 2, or 3.")
+            print("Invalid choice. Enter 1, 2, 3, or 4.")
 
 # Run the program
 if __name__ == "__main__":
