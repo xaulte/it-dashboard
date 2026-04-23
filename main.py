@@ -15,7 +15,8 @@ PROF_NAME = "Prof. Frank Mora"
 COURSE_NAME = "COP1034C - Python for IT"
 ASSIGNMENT_NAME = "Python Project"
 
-from datetime import date
+# Importing the current date for report timestamping
+from datetime import date  # noqa: E402
 today = date.today()
 todaystr = today.isoformat()  # 'YYYY-MM-DD'
 
@@ -97,7 +98,7 @@ def view_report():
     if not report_ready:
         print("No data entered yet. Choose option 1 first.")
         return
-
+    # Display the report
     print("\n--- IT Report ---")
     print(f"Server Name : {server_name}")
     print(f"IP Address  : {ip_address}")
@@ -106,7 +107,7 @@ def view_report():
     print(f"Used Disk   : {used_disk_gb} GB")
     print(f"Usage: {usage_pct:.2f}% ({storage_status})")
     print("------------------")
-
+# Log parsing function to extract date, severity, and message from a log line
 def parse_line(line):
     import re
     m = re.match(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) \[(\w+)\] (.*)$', line)
@@ -115,6 +116,7 @@ def parse_line(line):
     date_field, severity, message = m.groups()
     return {'date': date_field, 'severity': severity, 'message': message}
 
+# Log parser function to read server.log, summarize severity counts, unique errors, and critical events
 def run_log_parser():
     import os
     global severity_counts, unique_errors, critical_events, log_entries
@@ -122,7 +124,7 @@ def run_log_parser():
     unique_errors = set()
     critical_events = set()
     log_entries = []
-
+    # Read the log file and process each line
     try:
         logfile = os.path.join(os.path.dirname(__file__), 'server.log')
         with open(logfile, 'r') as f:
@@ -156,18 +158,19 @@ def run_log_parser():
         header_lines.append(f"{level:<9}: {count:>4}")
     header_section = "\n".join(header_lines)
 
+    # Write the summary report to log_summary.txt
     with open(os.path.join(os.path.dirname(__file__), 'log_summary.txt'), 'w') as out:
         print("=" * 37, file=out)
         print(f"{APP_NAME} v{VERSION}", file=out)
         print(f"{CREATOR_NAME} | {PROF_NAME}", file=out)
         print(f"{COURSE_NAME} | {today}", file=out)
         print("=" * 37, file=out)
-
+        # Append the log summary details
         print(header_section, file=out)
         print(f"\nError rate: {error_rate:.2f}%", file=out)
         print("Unique ERROR messages: {}".format(len(unique_errors)), file=out)
         print("CRITICAL events: {}".format(len(critical_events)), file=out)
-
+        # Append unique error messages and critical events
         print("\n" + "=" * 37, file=out)
         print(f"{'UNIQUE ERROR MESSAGES':^36}", file=out)
         print("-" * 37, file=out)
@@ -194,6 +197,8 @@ def main():
     print(f"{CREATOR_NAME} | {PROF_NAME}")
     print(f"{COURSE_NAME} | {ASSIGNMENT_NAME}")
     print("Ready to build something great.")
+
+    # Main loop
     while True:
         print_menu()
         choice = input("Select an option: ").strip()
