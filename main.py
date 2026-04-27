@@ -7,9 +7,13 @@ desktop application over 4 weeks. Each class session adds
 a new feature to this project.
 """
 
+# Import network device management modules
+from device_manger import Router, Switch, DeviceManager
+from network_visualizer import draw_topology
+
 # ── Application Metadata ──────────────────────────────────
 APP_NAME = "IT Dashboard"
-VERSION = "0.3.0"
+VERSION = "0.5.0"
 CREATOR_NAME = "Austin Windorski"
 PROF_NAME = "Prof. Frank Mora"
 COURSE_NAME = "COP1034C - Python for IT"
@@ -35,13 +39,92 @@ storage_status = "NORMAL"
 # Boolean flag: True once the user has entered data
 report_ready = False
 
-# Main menu
-def print_menu():
-    print("\n--- IT Report Generator ---")
+# Network Device Manager instance
+network_manager = DeviceManager()
+
+# Helper function to validate IPv4 address
+def is_valid_ipv4(ip):
+    """Validate that a string is a valid IPv4 address."""
+    import re
+    pattern = r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$'
+    match = re.match(pattern, ip)
+    if not match:
+        return False
+    # Check each octet is between 0-255
+    for octet in match.groups():
+        if int(octet) > 255:
+            return False
+    return True
+
+
+def is_ip_taken(ip):
+    """Check if an IP address is already in use by another device."""
+    for device in network_manager.devices:
+        if device.ip_address == ip:
+            return True
+    return False
+
+
+def get_valid_ip(prompt):
+    """Get a valid IPv4 address from user input."""
+    while True:
+        ip = input(prompt).strip()
+        if not is_valid_ipv4(ip):
+            print("Invalid IP address. Must be in format xxx.xxx.xxx.xxx (each octet 0-255).")
+            continue
+        if is_ip_taken(ip):
+            print("IP address is already in use by another device.")
+            continue
+        return ip
+
+
+def get_valid_protocol():
+    """Get a valid routing protocol from user input."""
+    valid_protocols = {
+        'O': 'OSPF',
+        'B': 'BGP',
+        'E': 'EIGRP',
+        'S': 'Static',
+        'OSPF': 'OSPF',
+        'BGP': 'BGP',
+        'EIGRP': 'EIGRP',
+        'STATIC': 'Static'
+    }
+    while True:
+        protocol = input("Enter routing protocol (O=OSPF, B=BGP, E=EIGRP, S=Static): ").strip().upper()
+        if protocol in valid_protocols:
+            return valid_protocols[protocol]
+        print("Invalid protocol. Enter O, B, E, S or full name (OSPF, BGP, EIGRP, Static).")
+
+
+# Pre-load some sample devices
+r1 = Router("CORE-RTR-01", "10.0.0.1", "OSPF")
+s1 = Switch("ACCESS-SW-01", "10.0.0.2", 24)
+r2 = Router("EDGE-RTR-01", "10.0.0.3", "BGP")
+network_manager.add_device(r1)
+network_manager.add_device(s1)
+network_manager.add_device(r2)
+
+# Main menu - Page 1
+def print_menu_page1():
+    print("\n--- IT Dashboard ---")
     print("1) Enter server info")
     print("2) View report")
     print("3) Parse log summary")
-    print("4) Exit")
+    print("M) More options...")
+    print("0) Exit")
+
+# Main menu - Page 2
+def print_menu_page2():
+    print("\n--- IT Dashboard (More) ---")
+    print("1) Add a router")
+    print("2) Add a switch")
+    print("3) List all network devices")
+    print("4) Draw network topology")
+    print("5) Ping a device")
+    print("6) Remove a device")
+    print("R) Back to main menu")
+    print("0) Exit")
 
 # Collecting user input
 def collect_input():
@@ -190,29 +273,115 @@ def run_log_parser():
             print("(none)", file=out)
 
 
+# Network device management functions
+def add_router_menu():
+    """Add a router to the network manager."""
+    hostname = input("Enter router hostname: ").strip()
+    ip_address = get_valid_ip("Enter router IP address: ")
+    protocol = get_valid_protocol()
+    router = Router(hostname, ip_address, routing_protocol=protocol)
+    network_manager.add_device(router)
+    print(f"Router '{hostname}' added successfully.")
+
+
+def add_switch_menu():
+    """Add a switch to the network manager."""
+    hostname = input("Enter switch hostname: ").strip()
+    ip_address = get_valid_ip("Enter switch IP address: ")
+    try:
+        port_count = int(input("Enter port count (24 or 48): ").strip())
+    except ValueError:
+        port_count = 24
+        print("Invalid port count, using default 24.")
+    switch = Switch(hostname, ip_address, port_count=port_count)
+    network_manager.add_device(switch)
+    print(f"Switch '{hostname}' added successfully.")
+
+
+def list_network_devices():
+    """List all network devices - demonstrates polymorphism."""
+    network_manager.list_all()
+
+
+def draw_topology_menu():
+    """Draw the network topology using turtle graphics."""
+    if not network_manager.devices:
+        print("No devices to draw. Add some devices first.")
+        return
+    print("Opening turtle graphics window... Close it to continue.")
+    try:
+        draw_topology(network_manager)
+    except Exception as e:
+        print(f"Topology window closed: {e}")
+
+
+def ping_device_menu():
+    """Ping a network device by hostname."""
+    hostname = input("Enter hostname to ping: ").strip()
+    device = network_manager.find_device(hostname)
+    if device:
+        print(f"Pinging {hostname} ({device.ip_address})...")
+        result = device.ping()
+        print(result)
+    else:
+        print(f"Device '{hostname}' not found.")
+
+
+def remove_device_menu():
+    """Remove a network device by hostname."""
+    hostname = input("Enter hostname to remove: ").strip()
+    network_manager.remove_device(hostname)
+
 # Defining the main app
 def main():
+    print("=" * 37)
     print(f"{APP_NAME} v{VERSION}")
-    print(f"{today}")
+    print()
     print(f"{CREATOR_NAME} | {PROF_NAME}")
-    print(f"{COURSE_NAME} | {ASSIGNMENT_NAME}")
+    print(f"{COURSE_NAME} | {today}")
     print("Ready to build something great.")
+    print("\nPre-loaded 3 sample network devices.")
+    print("=" * 37)
 
-    # Main loop
+    # Main loop - Page 1
     while True:
-        print_menu()
-        choice = input("Select an option: ").strip()
+        print_menu_page1()
+        choice = input("Select an option: ").strip().upper()
         if choice == "1":
             collect_input()
         elif choice == "2":
             view_report()
         elif choice == "3":
             run_log_parser()   # only here will logsummary.txt be created
-        elif choice == "4":
+        elif choice == "M":
+            # Go to Page 2
+            while True:
+                print_menu_page2()
+                choice = input("Select an option: ").strip().upper()
+                if choice == "1":
+                    add_router_menu()
+                elif choice == "2":
+                    add_switch_menu()
+                elif choice == "3":
+                    list_network_devices()
+                elif choice == "4":
+                    draw_topology_menu()
+                elif choice == "5":
+                    ping_device_menu()
+                elif choice == "6":
+                    remove_device_menu()
+                elif choice == "R":
+                    break  # Back to Page 1
+                elif choice == "0":
+                    print("Goodbye. Application shutting down.")
+                    return
+                else:
+                    print("Invalid choice. Enter 1-6, R, or 0.")
+        elif choice == "0":
             print("Goodbye. Application shutting down.")
             break
         else:
-            print("Invalid choice. Enter 1, 2, 3, or 4.")
+            print("Invalid choice. Enter 1-3, M, or 0.")
 
 # Run the program
 if __name__ == "__main__":
