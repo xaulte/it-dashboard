@@ -3,3 +3,5 @@
 #   pip freeze > requirements.txt
 # Install on another machine:
 #   pip install -r requirements.txt
+# Python package dependencies for IT Dashboard
+psutil==5.9.8  # Or just 'psutil' to grab the latest version

@@ -26,3 +26,6 @@ Thumbs.db
 dist/
 build/
 *.egg-info/
+
+# Auto-generated reports
+log_summary.txt

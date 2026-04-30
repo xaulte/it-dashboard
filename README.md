@@ -19,7 +19,7 @@ pip install -r requirements.txt
 
 ## Usage
 ```
-python main.py
+python main.pyw
 ```
 
 ## Author
