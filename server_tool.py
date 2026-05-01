@@ -1,3 +1,8 @@
+"""
+Server Status Tool | COP1034C - Python for IT
+Austin Windorski | 04/11/2026
+
+"""
 import tkinter as tk
 from tkinter import messagebox
 import psutil

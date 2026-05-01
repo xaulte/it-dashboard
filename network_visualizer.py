@@ -1,5 +1,10 @@
+"""
+Network Visualizer — COP1034C Python for IT
+Austin Windorski | 04/11/2026
+Module to visualize network topology using turtle graphics.
+Provides a function to draw devices from the DeviceManager in a simple layout.
+"""
 import turtle
-
 
 def draw_topology(manager):
     """Drawing a simple network topology using turtle.

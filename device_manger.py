@@ -1,3 +1,10 @@
+"""
+Device Manager — COP1034C Python for IT
+Austin Windorski | 04/11/2026
+Device Manager Module for IT Dashboard
+Used to provide classes for network devices and a manager to handle them.
+
+"""
 class NetworkDevice:
     """Base class representing a generic network device.
 
